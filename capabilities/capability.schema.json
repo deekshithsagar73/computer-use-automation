@@ -1,0 +1,501 @@
+{
+  "$defs": {
+    "AppRef": {
+      "description": "Seam for later tenant overlays: same vendor product, different institution.",
+      "properties": {
+        "vendor": {
+          "title": "Vendor",
+          "type": "string"
+        },
+        "product": {
+          "title": "Product",
+          "type": "string"
+        },
+        "entry_url": {
+          "title": "Entry Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "vendor",
+        "product",
+        "entry_url"
+      ],
+      "title": "AppRef",
+      "type": "object"
+    },
+    "AssertSpec": {
+      "properties": {
+        "url_regex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url Regex"
+        },
+        "text_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text Contains"
+        }
+      },
+      "title": "AssertSpec",
+      "type": "object"
+    },
+    "Checkpoint": {
+      "properties": {
+        "url_regex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url Regex"
+        },
+        "text_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text Contains"
+        },
+        "required_outputs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Outputs",
+          "type": "array"
+        }
+      },
+      "title": "Checkpoint",
+      "type": "object"
+    },
+    "ExtractSpec": {
+      "properties": {
+        "field": {
+          "description": "Output key to populate.",
+          "title": "Field",
+          "type": "string"
+        },
+        "locators": {
+          "items": {
+            "$ref": "#/$defs/LocatorStrategy"
+          },
+          "minItems": 1,
+          "title": "Locators",
+          "type": "array"
+        }
+      },
+      "required": [
+        "field",
+        "locators"
+      ],
+      "title": "ExtractSpec",
+      "type": "object"
+    },
+    "LocatorStrategy": {
+      "description": "One way to find a control. Replay tries locators in list order.",
+      "properties": {
+        "type": {
+          "enum": [
+            "role",
+            "label",
+            "placeholder",
+            "name",
+            "id",
+            "text",
+            "css",
+            "xpath"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "description": "Name, text, selector, or attribute value.",
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ARIA/HTML role when type=role, e.g. textbox, button, link.",
+          "title": "Role"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "LocatorStrategy",
+      "type": "object"
+    },
+    "OutcomeDetector": {
+      "description": "Known business result, not a crash. Evaluated after each step.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "success",
+            "business_outcome"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "url_regex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url Regex"
+        },
+        "text_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text Contains"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "code",
+        "kind"
+      ],
+      "title": "OutcomeDetector",
+      "type": "object"
+    },
+    "OutputDef": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "string",
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "OutputDef",
+      "type": "object"
+    },
+    "ParamDef": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "string",
+          "enum": [
+            "string",
+            "number",
+            "bool"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "secret": {
+          "default": false,
+          "title": "Secret",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ParamDef",
+      "type": "object"
+    },
+    "Step": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "navigate",
+            "click",
+            "type",
+            "extract",
+            "assert"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "risk": {
+          "default": "safe",
+          "enum": [
+            "safe",
+            "confirm",
+            "blocked"
+          ],
+          "title": "Risk",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Navigate target. May contain ${param} refs.",
+          "title": "Url"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Target"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text to type. May contain ${param} refs.",
+          "title": "Value"
+        },
+        "extract": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExtractSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "assertion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AssertSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "Step",
+      "type": "object"
+    },
+    "Target": {
+      "properties": {
+        "locators": {
+          "items": {
+            "$ref": "#/$defs/LocatorStrategy"
+          },
+          "minItems": 1,
+          "title": "Locators",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "locators"
+      ],
+      "title": "Target",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "version": {
+      "default": "1.0.0",
+      "title": "Version",
+      "type": "string"
+    },
+    "app": {
+      "$ref": "#/$defs/AppRef"
+    },
+    "params": {
+      "items": {
+        "$ref": "#/$defs/ParamDef"
+      },
+      "title": "Params",
+      "type": "array"
+    },
+    "outputs": {
+      "items": {
+        "$ref": "#/$defs/OutputDef"
+      },
+      "title": "Outputs",
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/Step"
+      },
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "checkpoint": {
+      "$ref": "#/$defs/Checkpoint"
+    },
+    "outcomes": {
+      "items": {
+        "$ref": "#/$defs/OutcomeDetector"
+      },
+      "title": "Outcomes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "description",
+    "app",
+    "steps",
+    "checkpoint"
+  ],
+  "title": "Capability",
+  "type": "object"
+}

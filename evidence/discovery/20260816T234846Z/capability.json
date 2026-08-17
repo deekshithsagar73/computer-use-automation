@@ -1,0 +1,236 @@
+{
+  "schema_version": "1.0",
+  "id": "parabank.lookup_balance",
+  "name": "Lookup ParaBank account balance",
+  "description": "Log in as john, open the first account, read the available balance, stop on the account activity page.",
+  "version": "1.0.0",
+  "app": {
+    "vendor": "parasoft",
+    "product": "parabank",
+    "entry_url": "https://parabank.parasoft.com/parabank/index.htm"
+  },
+  "params": [
+    {
+      "name": "username",
+      "type": "string",
+      "secret": false,
+      "required": true,
+      "description": null
+    },
+    {
+      "name": "password",
+      "type": "string",
+      "secret": true,
+      "required": true,
+      "description": null
+    }
+  ],
+  "outputs": [
+    {
+      "name": "account_id",
+      "type": "string",
+      "description": null
+    },
+    {
+      "name": "available_balance",
+      "type": "string",
+      "description": null
+    }
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "type": "navigate",
+      "description": "Open application",
+      "risk": "safe",
+      "url": "${entry_url}",
+      "target": null,
+      "value": null,
+      "extract": null,
+      "assertion": null
+    },
+    {
+      "id": "s2",
+      "type": "type",
+      "description": "Type into username",
+      "risk": "safe",
+      "url": null,
+      "target": {
+        "locators": [
+          {
+            "type": "role",
+            "value": "username",
+            "role": "textbox"
+          },
+          {
+            "type": "name",
+            "value": "username",
+            "role": null
+          }
+        ],
+        "description": "username"
+      },
+      "value": "${username}",
+      "extract": null,
+      "assertion": null
+    },
+    {
+      "id": "s3",
+      "type": "type",
+      "description": "Type into password",
+      "risk": "safe",
+      "url": null,
+      "target": {
+        "locators": [
+          {
+            "type": "role",
+            "value": "password",
+            "role": "textbox"
+          },
+          {
+            "type": "name",
+            "value": "password",
+            "role": null
+          }
+        ],
+        "description": "password"
+      },
+      "value": "${password}",
+      "extract": null,
+      "assertion": null
+    },
+    {
+      "id": "s4",
+      "type": "click",
+      "description": "Click Log In",
+      "risk": "safe",
+      "url": null,
+      "target": {
+        "locators": [
+          {
+            "type": "role",
+            "value": "Log In",
+            "role": "button"
+          }
+        ],
+        "description": "Log In"
+      },
+      "value": null,
+      "extract": null,
+      "assertion": null
+    },
+    {
+      "id": "s5",
+      "type": "click",
+      "description": "Click first account",
+      "risk": "safe",
+      "url": null,
+      "target": {
+        "locators": [
+          {
+            "type": "css",
+            "value": "#accountTable tbody tr td a",
+            "role": null
+          },
+          {
+            "type": "xpath",
+            "value": "//table[@id='accountTable']//a[1]",
+            "role": null
+          }
+        ],
+        "description": "first account"
+      },
+      "value": null,
+      "extract": null,
+      "assertion": null
+    },
+    {
+      "id": "s6",
+      "type": "extract",
+      "description": "Extract account id",
+      "risk": "safe",
+      "url": null,
+      "target": null,
+      "value": null,
+      "extract": {
+        "field": "account_id",
+        "locators": [
+          {
+            "type": "id",
+            "value": "accountId",
+            "role": null
+          },
+          {
+            "type": "css",
+            "value": "#accountId",
+            "role": null
+          }
+        ]
+      },
+      "assertion": null
+    },
+    {
+      "id": "s7",
+      "type": "extract",
+      "description": "Extract available balance",
+      "risk": "safe",
+      "url": null,
+      "target": null,
+      "value": null,
+      "extract": {
+        "field": "available_balance",
+        "locators": [
+          {
+            "type": "id",
+            "value": "availableBalance",
+            "role": null
+          },
+          {
+            "type": "css",
+            "value": "#availableBalance",
+            "role": null
+          }
+        ]
+      },
+      "assertion": null
+    },
+    {
+      "id": "s8",
+      "type": "assert",
+      "description": "Confirm account activity or overview",
+      "risk": "safe",
+      "url": null,
+      "target": null,
+      "value": null,
+      "extract": null,
+      "assertion": {
+        "url_regex": "activity\\.htm|overview\\.htm",
+        "text_contains": null
+      }
+    }
+  ],
+  "checkpoint": {
+    "url_regex": "activity\\.htm|overview\\.htm",
+    "text_contains": null,
+    "required_outputs": [
+      "account_id",
+      "available_balance"
+    ]
+  },
+  "outcomes": [
+    {
+      "code": "invalid_login",
+      "kind": "business_outcome",
+      "url_regex": null,
+      "text_contains": "could not be verified",
+      "description": "Username or password was rejected."
+    },
+    {
+      "code": "success",
+      "kind": "success",
+      "url_regex": "activity\\.htm|overview\\.htm",
+      "text_contains": null,
+      "description": null
+    }
+  ]
+}

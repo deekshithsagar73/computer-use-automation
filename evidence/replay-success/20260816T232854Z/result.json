@@ -1,0 +1,12 @@
+{
+  "status": "failed",
+  "outcome_code": "failed",
+  "outputs": {},
+  "step_id": "s6",
+  "expected": "url /activity\\\\.htm|overview\\\\.htm/",
+  "observed": "https://parabank.parasoft.com/parabank/activity.htm?id=****3344",
+  "evidence_dir": "C:\\Users\\deeks\\OneDrive\\Desktop\\job\\computer-use-automation\\evidence\\replay-success\\20260816T232854Z",
+  "llm_calls": 0,
+  "error": "https://parabank.parasoft.com/parabank/activity.htm?id=****3344",
+  "recovered_events": []
+}

@@ -1,0 +1,35 @@
+[project]
+name = "computer-use-automation"
+version = "0.1.0"
+description = "Record-once / replay-many computer-use layer for legacy UIs with no API."
+readme = "README.md"
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "playwright>=1.49.0",
+    "pydantic>=2.10.0",
+    "python-dotenv>=1.0.0",
+    "google-genai>=1.0.0",
+    "openai>=1.60.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+
+[project.scripts]
+cua = "capability_runtime.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]
+filterwarnings = ["ignore::DeprecationWarning"]

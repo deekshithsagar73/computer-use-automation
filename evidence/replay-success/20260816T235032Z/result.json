@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "outcome_code": "success",
+  "outputs": {
+    "account_id": "****3344",
+    "available_balance": "$4652.93"
+  },
+  "step_id": null,
+  "expected": null,
+  "observed": null,
+  "evidence_dir": "C:\\Users\\deeks\\OneDrive\\Desktop\\job\\computer-use-automation\\evidence\\replay-success\\20260816T235032Z",
+  "llm_calls": 0,
+  "error": null,
+  "recovered_events": []
+}

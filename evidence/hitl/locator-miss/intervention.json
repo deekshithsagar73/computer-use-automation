@@ -1,0 +1,12 @@
+{
+  "capability": "parabank.lookup_balance.hitl_miss",
+  "goal": "Logs into ParaBank, then intentionally misses the first-account click so the session pauses for a human. Not a production capability.",
+  "step_id": "s6",
+  "why": "locator_miss",
+  "expected": "Intentionally missing locator so HITL pause fires on the overview page",
+  "observed": "locator ladder exhausted: css='#cua-hitl-missing-account-link' timeout; id='cua-hitl-missing-account-link' timeout",
+  "url": "https://parabank.parasoft.com/parabank/overview.htm",
+  "screenshot": "evidence\\hitl\\locator-miss\\intervention.png",
+  "controller": "human",
+  "resume_how": "python cli.py resume --run-id locator-miss"
+}

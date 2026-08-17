@@ -1,0 +1,12 @@
+{
+  "status": "business_outcome",
+  "outcome_code": "invalid_login",
+  "outputs": {},
+  "step_id": "s4",
+  "expected": null,
+  "observed": null,
+  "evidence_dir": "C:\\Users\\deeks\\OneDrive\\Desktop\\job\\computer-use-automation\\evidence\\replay-error\\20260816T232454Z",
+  "llm_calls": 0,
+  "error": null,
+  "recovered_events": []
+}

@@ -1,0 +1,7 @@
+{"ts": "2026-08-16T23:28:54.389995+00:00", "event": "replay_start", "capability": "parabank.lookup_balance", "llm_calls": 0}
+{"ts": "2026-08-16T23:28:55.525882+00:00", "event": "act", "actor": "automation", "step": "s1", "type": "navigate", "url": "https://parabank.parasoft.com/parabank/index.htm"}
+{"ts": "2026-08-16T23:29:00.573282+00:00", "event": "act", "actor": "automation", "step": "s2", "type": "type"}
+{"ts": "2026-08-16T23:29:05.600203+00:00", "event": "act", "actor": "automation", "step": "s3", "type": "type"}
+{"ts": "2026-08-16T23:29:06.948297+00:00", "event": "act", "actor": "automation", "step": "s4", "type": "click"}
+{"ts": "2026-08-16T23:29:08.239629+00:00", "event": "act", "actor": "automation", "step": "s5", "type": "click"}
+{"ts": "2026-08-16T23:29:08.291882+00:00", "event": "replay_end", "status": "failed", "llm_calls": 0}

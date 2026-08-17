@@ -1,0 +1,65 @@
+[
+  {
+    "type": "navigate",
+    "url": "https://parabank.parasoft.com/parabank/index.htm",
+    "control": null
+  },
+  {
+    "type": "type",
+    "control": {
+      "index": 9,
+      "role": "textbox",
+      "name": "username",
+      "id": null,
+      "input_name": "username",
+      "placeholder": null,
+      "tag": "input",
+      "type": "text",
+      "href": null
+    },
+    "value": "john"
+  },
+  {
+    "type": "type",
+    "control": {
+      "index": 10,
+      "role": "textbox",
+      "name": "password",
+      "id": null,
+      "input_name": "password",
+      "placeholder": null,
+      "tag": "input",
+      "type": "password",
+      "href": null
+    },
+    "value": "<secret:password>"
+  },
+  {
+    "type": "click",
+    "control": {
+      "index": 11,
+      "role": "button",
+      "name": "Log In",
+      "id": null,
+      "input_name": null,
+      "placeholder": null,
+      "tag": "input",
+      "type": "submit",
+      "href": null
+    }
+  },
+  {
+    "type": "click",
+    "control": {
+      "index": 17,
+      "role": "link",
+      "name": "****3344",
+      "id": null,
+      "input_name": null,
+      "placeholder": null,
+      "tag": "a",
+      "type": null,
+      "href": "activity.htm?id=****3344"
+    }
+  }
+]

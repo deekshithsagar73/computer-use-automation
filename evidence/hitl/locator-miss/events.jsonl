@@ -1,0 +1,12 @@
+{"ts": "2026-08-17T00:06:34.721951+00:00", "event": "replay_start", "capability": "parabank.lookup_balance.hitl_miss", "llm_calls": 0}
+{"ts": "2026-08-17T00:06:35.673630+00:00", "event": "act", "actor": "automation", "step": "s1", "type": "navigate", "url": "https://parabank.parasoft.com/parabank/index.htm"}
+{"ts": "2026-08-17T00:06:35.712032+00:00", "event": "act", "actor": "automation", "step": "s2", "type": "type"}
+{"ts": "2026-08-17T00:06:35.728626+00:00", "event": "act", "actor": "automation", "step": "s3", "type": "type"}
+{"ts": "2026-08-17T00:06:37.159316+00:00", "event": "act", "actor": "automation", "step": "s4", "type": "click"}
+{"ts": "2026-08-17T00:06:37.188507+00:00", "event": "act", "actor": "automation", "step": "s5", "type": "extract", "field": "account_id"}
+{"ts": "2026-08-17T00:06:47.220939+00:00", "event": "locator_miss", "step": "s6", "error": "locator ladder exhausted: css='#cua-hitl-missing-account-link' timeout; id='cua-hitl-missing-account-link' timeout"}
+{"ts": "2026-08-17T00:06:47.297250+00:00", "event": "screenshot", "path": "s6-miss.png"}
+{"ts": "2026-08-17T00:06:47.357340+00:00", "event": "escalated", "step": "s6", "why": "locator_miss", "controller": "human"}
+{"ts": "2026-08-17T00:07:44.848828+00:00", "event": "resumed", "actor": "human", "human_actions": []}
+{"ts": "2026-08-17T00:07:54.911664+00:00", "event": "screenshot", "path": "after-human.png"}
+{"ts": "2026-08-17T00:07:54.911664+00:00", "event": "replay_end", "status": "escalated", "llm_calls": 0}

@@ -1,0 +1,14 @@
+{
+  "status": "escalated",
+  "outcome_code": "human_resumed",
+  "outputs": {
+    "account_id": "****3344"
+  },
+  "step_id": "s6",
+  "expected": "step succeeded after human",
+  "observed": "locator ladder exhausted: css='#cua-hitl-missing-account-link' timeout; id='cua-hitl-missing-account-link' timeout",
+  "evidence_dir": "evidence\\hitl\\locator-miss",
+  "llm_calls": 0,
+  "error": null,
+  "recovered_events": []
+}

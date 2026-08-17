@@ -1,0 +1,12 @@
+{
+  "status": "failed",
+  "outcome_code": "failed",
+  "outputs": {},
+  "step_id": "4",
+  "expected": "progress toward the goal",
+  "observed": "repeated the same action",
+  "evidence_dir": "C:\\Users\\deeks\\OneDrive\\Desktop\\job\\computer-use-automation\\evidence\\discovery\\20260816T233854Z",
+  "llm_calls": 4,
+  "error": "repeated the same action",
+  "recovered_events": []
+}

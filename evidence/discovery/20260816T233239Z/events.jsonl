@@ -1,0 +1,1 @@
+{"ts": "2026-08-16T23:32:41.779735+00:00", "event": "discover_start", "goal": "Log in as john, open the first account, read the available balance, stop on the account activity page.", "url": "https://parabank.parasoft.com/parabank/index.htm"}

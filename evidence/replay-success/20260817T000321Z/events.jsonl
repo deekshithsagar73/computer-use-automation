@@ -1,0 +1,11 @@
+{"ts": "2026-08-17T00:03:21.821636+00:00", "event": "replay_start", "capability": "parabank.lookup_balance", "llm_calls": 0}
+{"ts": "2026-08-17T00:03:25.620763+00:00", "event": "act", "actor": "automation", "step": "s1", "type": "navigate", "url": "https://parabank.parasoft.com/parabank/index.htm"}
+{"ts": "2026-08-17T00:03:25.717431+00:00", "event": "act", "actor": "automation", "step": "s2", "type": "type"}
+{"ts": "2026-08-17T00:03:25.756026+00:00", "event": "act", "actor": "automation", "step": "s3", "type": "type"}
+{"ts": "2026-08-17T00:03:27.131654+00:00", "event": "act", "actor": "automation", "step": "s4", "type": "click"}
+{"ts": "2026-08-17T00:03:27.199116+00:00", "event": "act", "actor": "automation", "step": "s5", "type": "extract", "field": "account_id"}
+{"ts": "2026-08-17T00:03:28.440649+00:00", "event": "act", "actor": "automation", "step": "s6", "type": "click"}
+{"ts": "2026-08-17T00:03:28.495346+00:00", "event": "act", "actor": "automation", "step": "s7", "type": "extract", "field": "available_balance"}
+{"ts": "2026-08-17T00:03:28.522245+00:00", "event": "act", "actor": "automation", "step": "s8", "type": "assert"}
+{"ts": "2026-08-17T00:03:28.644608+00:00", "event": "screenshot", "path": "final.png"}
+{"ts": "2026-08-17T00:03:28.645605+00:00", "event": "replay_end", "status": "success", "llm_calls": 0}
