@@ -1,0 +1,13 @@
+{
+  "capability": "parabank.lookup_balance.hitl_demo",
+  "goal": "Same as lookup balance, but step s6 uses a stale locator so automation pauses on Accounts Overview. Operator opens the account in Chromium; replay continues on the activity page.",
+  "step_id": "s6",
+  "why": "locator_miss",
+  "expected": "Open first account (stale locator triggers HITL)",
+  "observed": "locator ladder exhausted: css='#cua-stale-account-link' timeout",
+  "url": "https://parabank.parasoft.com/parabank/overview.htm",
+  "instructions": "Click the first account number link in the Accounts Overview table.",
+  "screenshot": "evidence\\hitl\\handoff-success\\intervention.png",
+  "controller": "human",
+  "resume_how": "python cli.py resume --run-id handoff-success"
+}

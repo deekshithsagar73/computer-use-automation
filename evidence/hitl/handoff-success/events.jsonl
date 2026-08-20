@@ -1,0 +1,17 @@
+{"ts": "2026-08-20T06:17:16.108106+00:00", "event": "replay_start", "capability": "parabank.lookup_balance.hitl_<secret:password>", "llm_calls": 0}
+{"ts": "2026-08-20T06:17:17.195005+00:00", "event": "act", "actor": "automation", "step": "s1", "type": "navigate", "url": "https://parabank.parasoft.com/parabank/index.htm"}
+{"ts": "2026-08-20T06:17:17.235874+00:00", "event": "act", "actor": "automation", "step": "s2", "type": "type"}
+{"ts": "2026-08-20T06:17:17.253169+00:00", "event": "act", "actor": "automation", "step": "s3", "type": "type"}
+{"ts": "2026-08-20T06:17:18.759044+00:00", "event": "act", "actor": "automation", "step": "s4", "type": "click"}
+{"ts": "2026-08-20T06:17:18.789796+00:00", "event": "act", "actor": "automation", "step": "s5", "type": "extract", "field": "account_id"}
+{"ts": "2026-08-20T06:17:23.808721+00:00", "event": "locator_miss", "step": "s6", "error": "locator ladder exhausted: css='#cua-stale-account-link' timeout"}
+{"ts": "2026-08-20T06:17:23.882105+00:00", "event": "screenshot", "path": "s6-miss.png"}
+{"ts": "2026-08-20T06:17:23.969111+00:00", "event": "escalated", "step": "s6", "why": "locator_miss", "controller": "human"}
+{"ts": "2026-08-20T06:17:26.658719+00:00", "event": "simulated_human", "step": "s6", "url": "https://parabank.parasoft.com/parabank/activity.htm?id=****2345"}
+{"ts": "2026-08-20T06:17:26.998996+00:00", "event": "resumed", "actor": "human", "human_actions": []}
+{"ts": "2026-08-20T06:17:27.021546+00:00", "event": "human_completed_step", "step": "s6", "url": "https://parabank.parasoft.com/parabank/activity.htm?id=****2345"}
+{"ts": "2026-08-20T06:17:27.085575+00:00", "event": "screenshot", "path": "after-human.png"}
+{"ts": "2026-08-20T06:17:27.099230+00:00", "event": "act", "actor": "automation", "step": "s7", "type": "extract", "field": "available_balance"}
+{"ts": "2026-08-20T06:17:27.112331+00:00", "event": "act", "actor": "automation", "step": "s8", "type": "assert"}
+{"ts": "2026-08-20T06:17:27.182017+00:00", "event": "screenshot", "path": "final.png"}
+{"ts": "2026-08-20T06:17:27.183078+00:00", "event": "replay_end", "status": "recovered", "llm_calls": 0}

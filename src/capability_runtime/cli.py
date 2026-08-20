@@ -53,7 +53,7 @@ def cmd_discover(args: argparse.Namespace) -> int:
     url = args.url or os.getenv("TARGET_URL", "https://parabank.parasoft.com/parabank/index.htm")
     evidence = Path(args.evidence) if args.evidence else _run_dir("discovery")
     params = _params_from_args(args)
-    headed = not args.headless
+    headed = _resolve_headed(args)
 
     async def _go() -> int:
         run = DiscoveryRun(
@@ -69,7 +69,8 @@ def cmd_discover(args: argparse.Namespace) -> int:
         result, cap = await run.run()
         print(result.model_dump_json(indent=2))
         if cap:
-            out = ROOT / "capabilities" / "lookup_balance.generated.json"
+            out_name = args.capability_out or "lookup_balance.generated.json"
+            out = ROOT / "capabilities" / out_name
             cap.save(out)
             print(f"wrote {out}")
         print(f"evidence: {evidence}")
@@ -78,12 +79,21 @@ def cmd_discover(args: argparse.Namespace) -> int:
     return asyncio.run(_go())
 
 
+def _resolve_headed(args: argparse.Namespace) -> bool:
+    """HITL requires a visible browser so an operator can click the live page."""
+    if getattr(args, "hitl", False):
+        if getattr(args, "headless", False):
+            print("HITL mode opens a headed Chromium window (--headless ignored).", file=sys.stderr)
+        return True
+    return not args.headless
+
+
 def cmd_replay(args: argparse.Namespace) -> int:
     _load_env()
     cap = Capability.load(args.capability)
     params = _params_from_args(args)
     evidence = Path(args.evidence) if args.evidence else _run_dir(args.evidence_kind)
-    headed = not args.headless
+    headed = _resolve_headed(args)
 
     async def _go() -> int:
         engine = ReplayEngine(
@@ -97,7 +107,7 @@ def cmd_replay(args: argparse.Namespace) -> int:
         result = await engine.run()
         print(result.model_dump_json(indent=2))
         print(f"llm_calls={result.llm_calls} evidence={evidence}")
-        return 0 if result.status.value in {"success", "business_outcome", "recovered", "escalated"} else 1
+        return 0 if result.status.value in {"success", "business_outcome", "recovered"} else 1
 
     return asyncio.run(_go())
 
@@ -132,8 +142,9 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("--params")
     d.add_argument("--evidence")
     d.add_argument("--max-steps", type=int, default=25)
-    d.add_argument("--headless", action="store_true")
+    d.add_argument("--headless", action="store_true", help="Headless browser (default: headed for demos)")
     d.add_argument("--hitl", action="store_true")
+    d.add_argument("--capability-out", help="Filename under capabilities/ for a successful compile")
     d.add_argument("--provider", choices=["openai", "gemini", "scripted"], help="Override LLM_PROVIDER")
     d.set_defaults(func=cmd_discover)
 
@@ -142,7 +153,7 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--params")
     r.add_argument("--evidence")
     r.add_argument("--evidence-kind", default="replay-success")
-    r.add_argument("--headless", action="store_true")
+    r.add_argument("--headless", action="store_true", help="Headless browser (default: headed for demos)")
     r.add_argument("--hitl", action="store_true")
     r.set_defaults(func=cmd_replay)
 

@@ -21,6 +21,7 @@ def test_action_allowlist():
     with pytest.raises(PolicyViolation):
         policy.check_action("evaluate_js")
     policy.check_action("click")
+    policy.check_action("select")
 
 
 def test_irreversible_transfer_blocked():

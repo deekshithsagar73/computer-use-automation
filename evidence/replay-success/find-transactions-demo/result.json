@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "outcome_code": "success",
+  "outputs": {
+    "account_id": "****3344",
+    "transaction_count": "1"
+  },
+  "step_id": null,
+  "expected": null,
+  "observed": null,
+  "evidence_dir": "evidence\\replay-success\\find-transactions-<secret:password>",
+  "llm_calls": 0,
+  "error": null,
+  "recovered_events": []
+}

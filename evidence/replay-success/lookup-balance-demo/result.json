@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "outcome_code": "success",
+  "outputs": {
+    "account_id": "****2345",
+    "available_balance": "$0.00"
+  },
+  "step_id": null,
+  "expected": null,
+  "observed": null,
+  "evidence_dir": "evidence\\replay-success\\lookup-balance-<secret:password>",
+  "llm_calls": 0,
+  "error": null,
+  "recovered_events": []
+}

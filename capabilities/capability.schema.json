@@ -303,6 +303,7 @@
             "navigate",
             "click",
             "type",
+            "select",
             "extract",
             "assert"
           ],

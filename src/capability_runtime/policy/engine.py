@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field
 
-ALLOWED_ACTIONS = frozenset({"navigate", "click", "type", "extract", "assert"})
+ALLOWED_ACTIONS = frozenset({"navigate", "click", "type", "select", "extract", "assert"})
 INTERNAL_URLS = frozenset({"about:blank", "chrome://new-tab-page/", "chrome://newtab/"})
 
 IRREVERSIBLE_NAME_MARKERS = (

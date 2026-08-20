@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "id": "parabank.lookup_balance.hitl_miss",
-  "name": "HITL demo: locator miss after login",
-  "description": "Logs into ParaBank, then intentionally misses the first-account click so the session pauses for a human. Not a production capability.",
+  "id": "parabank.lookup_balance.hitl_demo",
+  "name": "Lookup balance with HITL handoff demo",
+  "description": "Same as lookup balance, but step s6 uses a stale locator so automation pauses on Accounts Overview. Operator opens the account in Chromium; replay continues on the activity page.",
   "version": "1.0.0",
   "app": {
     "vendor": "parasoft",
@@ -10,38 +10,21 @@
     "entry_url": "https://parabank.parasoft.com/parabank/index.htm"
   },
   "params": [
-    {
-      "name": "username",
-      "type": "string",
-      "secret": false,
-      "required": true
-    },
-    {
-      "name": "password",
-      "type": "string",
-      "secret": true,
-      "required": true
-    }
+    { "name": "username", "type": "string", "secret": false, "required": true },
+    { "name": "password", "type": "string", "secret": true, "required": true }
   ],
   "outputs": [
     { "name": "account_id", "type": "string" },
     { "name": "available_balance", "type": "string" }
   ],
   "steps": [
-    {
-      "id": "s1",
-      "type": "navigate",
-      "description": "Open ParaBank",
-      "risk": "safe",
-      "url": "${entry_url}"
-    },
+    { "id": "s1", "type": "navigate", "description": "Open ParaBank", "risk": "safe", "url": "${entry_url}" },
     {
       "id": "s2",
       "type": "type",
       "description": "Enter username",
       "risk": "safe",
       "target": {
-        "description": "username field",
         "locators": [
           { "type": "name", "value": "username" },
           { "type": "css", "value": "input[name='username']" }
@@ -55,7 +38,6 @@
       "description": "Enter password",
       "risk": "safe",
       "target": {
-        "description": "password field",
         "locators": [
           { "type": "name", "value": "password" },
           { "type": "css", "value": "input[name='password']" }
@@ -69,7 +51,6 @@
       "description": "Submit login",
       "risk": "safe",
       "target": {
-        "description": "Log In",
         "locators": [
           { "type": "role", "role": "button", "value": "Log In" },
           { "type": "css", "value": "input[type='submit'][value='Log In']" }
@@ -79,7 +60,7 @@
     {
       "id": "s5",
       "type": "extract",
-      "description": "Read first account id from overview table",
+      "description": "Read first account id from overview",
       "risk": "safe",
       "extract": {
         "field": "account_id",
@@ -91,15 +72,34 @@
     {
       "id": "s6",
       "type": "click",
-      "description": "Intentionally missing locator so HITL pause fires on the overview page",
+      "description": "Open first account (stale locator triggers HITL)",
       "risk": "safe",
       "target": {
-        "description": "broken first-account locator",
+        "description": "first account link",
         "locators": [
-          { "type": "css", "value": "#cua-hitl-missing-account-link" },
-          { "type": "id", "value": "cua-hitl-missing-account-link" }
+          { "type": "css", "value": "#cua-stale-account-link" }
         ]
       }
+    },
+    {
+      "id": "s7",
+      "type": "extract",
+      "description": "Extract available balance",
+      "risk": "safe",
+      "extract": {
+        "field": "available_balance",
+        "locators": [
+          { "type": "id", "value": "availableBalance" },
+          { "type": "css", "value": "#availableBalance" }
+        ]
+      }
+    },
+    {
+      "id": "s8",
+      "type": "assert",
+      "description": "Confirm account activity page",
+      "risk": "safe",
+      "assertion": { "url_regex": "activity\\.htm" }
     }
   ],
   "checkpoint": {

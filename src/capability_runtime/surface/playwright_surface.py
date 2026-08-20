@@ -164,6 +164,16 @@ class Surface:
         await self._settle()
         return f"typed into {target.description or target.locators[0].value}"
 
+    async def select_option(self, target: Target, value: str) -> str:
+        """Set a <select> value. Used by find-transactions and similar forms."""
+        loc = await self.resolve(target)
+        tag = (await loc.evaluate("el => el.tagName")).lower()
+        if tag != "select":
+            raise LookupError(f"select_option requires a <select>, got {tag}")
+        await loc.select_option(value, timeout=self.timeout_ms)
+        await self._settle()
+        return f"selected {value!r} in {target.description or target.locators[0].value}"
+
     async def extract_text(self, locators: list[LocatorStrategy]) -> str:
         loc = await self.resolve(Target(locators=locators))
         text = ""

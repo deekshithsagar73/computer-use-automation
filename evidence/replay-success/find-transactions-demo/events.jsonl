@@ -1,0 +1,14 @@
+{"ts": "2026-08-20T06:17:13.670007+00:00", "event": "replay_start", "capability": "parabank.find_transactions", "llm_calls": 0}
+{"ts": "2026-08-20T06:17:15.040157+00:00", "event": "act", "actor": "automation", "step": "s1", "type": "navigate", "url": "https://parabank.parasoft.com/parabank/index.htm"}
+{"ts": "2026-08-20T06:17:15.089183+00:00", "event": "act", "actor": "automation", "step": "s2", "type": "type"}
+{"ts": "2026-08-20T06:17:15.106333+00:00", "event": "act", "actor": "automation", "step": "s3", "type": "type"}
+{"ts": "2026-08-20T06:17:16.484701+00:00", "event": "act", "actor": "automation", "step": "s4", "type": "click"}
+{"ts": "2026-08-20T06:17:17.304019+00:00", "event": "act", "actor": "automation", "step": "s5", "type": "click"}
+{"ts": "2026-08-20T06:17:17.366236+00:00", "event": "act", "actor": "automation", "step": "s6", "type": "select"}
+{"ts": "2026-08-20T06:17:17.386788+00:00", "event": "act", "actor": "automation", "step": "s7", "type": "type"}
+{"ts": "2026-08-20T06:17:17.410218+00:00", "event": "act", "actor": "automation", "step": "s8", "type": "type"}
+{"ts": "2026-08-20T06:17:17.470369+00:00", "event": "act", "actor": "automation", "step": "s9", "type": "click"}
+{"ts": "2026-08-20T06:17:18.313676+00:00", "event": "act", "actor": "automation", "step": "s10", "type": "extract", "field": "transaction_count"}
+{"ts": "2026-08-20T06:17:18.332588+00:00", "event": "act", "actor": "automation", "step": "s11", "type": "assert"}
+{"ts": "2026-08-20T06:17:18.405488+00:00", "event": "screenshot", "path": "final.png"}
+{"ts": "2026-08-20T06:17:18.406470+00:00", "event": "replay_end", "status": "success", "llm_calls": 0}

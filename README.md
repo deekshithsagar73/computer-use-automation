@@ -1,112 +1,115 @@
 # Computer-use capability runtime
 
-Backend integration layer that gives an AI agent hands on a legacy UI with **no API**.
+Integration layer for legacy web UIs that have no API. A model discovers a flow once; the run compiles into a typed **capability** JSON file. Production **replay** executes that file with Playwright and **never calls an LLM**.
 
-The model discovers a flow once. The successful run is saved as a typed, versioned **capability**. Production replay executes that capability **without an LLM**.
+Target application: [ParaBank](https://parabank.parasoft.com/parabank/index.htm) (Parasoft demo bank). All interaction is through the UI; ParaBank REST endpoints are not used.
 
-Target surface: [ParaBank](https://parabank.parasoft.com/parabank/index.htm) (Parasoft’s public demo bank). We drive the UI only; we never call ParaBank’s REST API.
+## Architecture (short)
+
+| Runtime | Role |
+|---|---|
+| `DiscoveryRun` | LLM + accessibility snapshot → action loop → compiler emits `capability.v1` |
+| `ReplayEngine` | Walks capability steps, policy checks, locator ladder, `llm_calls=0` |
+| `LiveSession` | Single Chromium context; `automation` ↔ `human` controller for HITL |
+| `Policy` | Host allowlist, action allowlist, irreversible click blocks, secret redaction |
+| `Surface` | Playwright observe/act (extensible to other drivers via the same interface) |
+
+Design detail: `REPORT.md`.
 
 ## Setup
 
-Python 3.11+. From this directory:
+Python 3.11+.
 
 ```bash
 python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# macOS/Linux
-# source .venv/bin/activate
-
+.venv\Scripts\activate          # Windows
 pip install -e ".[dev]"
 playwright install chromium
-copy .env.example .env   # Windows
-# cp .env.example .env   # macOS/Linux
+copy .env.example .env
 ```
 
-Edit `.env`:
+`.env` holds `OPENAI_API_KEY` for **discovery only**. Replay does not need a model key.
 
-- `OPENAI_API_KEY` — required **only** for `discover`. Replay does not need a model key.
-- Optional: `LLM_PROVIDER=gemini` plus `GOOGLE_API_KEY` if you want the Gemini fallback.
+## Capabilities shipped in this repo
 
-Default discovery model: `gpt-4.1-mini`.
+| File | Flow |
+|---|---|
+| `lookup_balance.v1.json` | Login → first account → available balance |
+| `find_transactions.v1.json` | Login → Find Transactions → date-range search → row count |
+| `lookup_balance.hitl-demo.json` | Same as lookup balance; stale locator on account click to demo HITL |
+| `lookup_balance.generated.json` | Produced by the last successful OpenAI discovery run |
 
-## Demo path (exact commands)
+## Demo commands (headed browser by default)
 
-### 1. Replay without a model (no API key)
+Chromium opens visibly unless `--headless` is passed.
 
-Happy path:
+### Simple replay (no model)
 
 ```bash
-python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.success.json --headless --evidence-kind replay-success
+python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.success.json --evidence evidence/replay-success/lookup-balance-demo
 ```
 
-Expected business outcome (bad password — not a crash):
+Business outcome (empty login → `invalid_login`, not a crash):
 
 ```bash
-python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.invalid_login.json --headless --evidence-kind replay-error
+python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.invalid_login.json --evidence evidence/replay-error/invalid-login-demo
 ```
 
-`llm_calls` in the printed result must be `0`.
-
-### 2. Discover with OpenAI, then replay the generated artifact
+### Complex replay (multi-step form, `select` step)
 
 ```bash
-python cli.py discover --goal "Log in as john, open the first account, read the available balance, stop on the account activity page." --headless
-python cli.py replay --capability capabilities/lookup_balance.generated.json --params capabilities/params.success.json --headless --evidence-kind replay-success
+python cli.py replay --capability capabilities/find_transactions.v1.json --params capabilities/params.find_transactions.json --evidence evidence/replay-success/find-transactions-demo
 ```
 
-`discover` uses `LLM_PROVIDER` from `.env` (default `openai`). Override with `--provider gemini` if a Google key is set.
-
-### 3. Human-in-the-loop
-
-In terminal A (headed browser stays open when stuck):
+### Discovery (OpenAI)
 
 ```bash
-python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.success.json --hitl
+python cli.py discover --goal "Log in as john, open the first account, read the available balance, stop on the account activity page."
+python cli.py replay --capability capabilities/lookup_balance.generated.json --params capabilities/params.success.json --evidence evidence/replay-success/generated-replay
 ```
 
-If automation pauses, `evidence/<kind>/<run>/intervention.json` explains why. Use the same live window, then:
+### Human-in-the-loop (live interview demo)
+
+Terminal A — replay pauses on Accounts Overview; **click the account link in the Chromium window**:
 
 ```bash
-python cli.py resume --run-id <run-folder-name>
+python cli.py replay --capability capabilities/lookup_balance.hitl-demo.json --params capabilities/params.success.json --hitl --evidence evidence/hitl/live-handoff
 ```
 
-Recorded HITL evidence (locator miss after login, pause, resume):
+Terminal B — after clicking the account and reaching the activity page:
 
 ```bash
-python cli.py replay --capability capabilities/lookup_balance.hitl-miss.json --params capabilities/params.success.json --hitl --headless --evidence evidence/hitl/locator-miss
-python cli.py resume --run-id locator-miss
+python cli.py resume --run-id live-handoff
 ```
 
-### Week-1 locator gate (no LLM)
+Automation resumes, extracts balance, finishes with `success_after_human` and `llm_calls=0`.
 
-```bash
-python scripts/parabank_login.py
-```
+Evidence under `evidence/hitl/handoff-success/` was captured with `CUA_SIMULATE_HUMAN=1` for CI; live demos should omit that variable.
 
-## Tests (no live LLM)
+## Tests
 
 ```bash
 pytest -q
 ```
 
-## Layout
+## Repository layout
 
-| Path | Role |
-|---|---|
-| `src/capability_runtime/schema/` | Capability v1 + result taxonomy |
-| `src/capability_runtime/policy/` | Host/action allowlist, redaction |
-| `src/capability_runtime/surface/` | Playwright observe/act |
-| `src/capability_runtime/replay/` | Deterministic interpreter |
-| `src/capability_runtime/discovery/` | OpenAI loop + compiler |
-| `src/capability_runtime/session/` | `automation` / `human` control |
-| `capabilities/` | Reviewable artifacts |
-| `evidence/` | Discovery + replay logs |
-| `REPORT.md` | Design write-up |
+```
+src/capability_runtime/
+  schema/       capability.v1 + result taxonomy
+  policy/       allowlist, redaction
+  surface/      Playwright adapter
+  replay/       deterministic interpreter
+  discovery/    LLM loop + compiler
+  session/      HITL control transfer
+  llm/          OpenAI / Gemini clients
+capabilities/   versioned workflow artifacts
+evidence/       run logs, PNGs, intervention.json
+REPORT.md       design write-up (assignment headings)
+```
 
-## Safety
+## Safety defaults
 
-- Allowlist: `parabank.parasoft.com` only.
-- Secrets are `${password}` refs in artifacts; logs redact values.
-- Transfer / Bill Pay / Open New Account clicks are blocked as irreversible.
-- Demo user `john` / `demo` is public test data, not real PII.
+- Host allowlist: `parabank.parasoft.com`
+- Blocked clicks: Transfer Funds, Bill Pay, Open New Account
+- Passwords stored as `${password}` in artifacts; values redacted in JSONL

@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.0",
+  "id": "parabank.find_transactions",
+  "name": "Find ParaBank transactions by date range",
+  "description": "Log in, open Find Transactions, select an account, search a date range, return the number of matching rows.",
+  "version": "1.0.0",
+  "app": {
+    "vendor": "parasoft",
+    "product": "parabank",
+    "entry_url": "https://parabank.parasoft.com/parabank/index.htm"
+  },
+  "params": [
+    { "name": "username", "type": "string", "secret": false, "required": true },
+    { "name": "password", "type": "string", "secret": true, "required": true },
+    { "name": "account_id", "type": "string", "secret": false, "required": true },
+    { "name": "from_date", "type": "string", "secret": false, "required": true, "description": "MM-DD-YYYY" },
+    { "name": "to_date", "type": "string", "secret": false, "required": true, "description": "MM-DD-YYYY" }
+  ],
+  "outputs": [
+    { "name": "transaction_count", "type": "string", "description": "Rows returned in the search results table" },
+    { "name": "account_id", "type": "string" }
+  ],
+  "steps": [
+    { "id": "s1", "type": "navigate", "description": "Open ParaBank", "risk": "safe", "url": "${entry_url}" },
+    {
+      "id": "s2",
+      "type": "type",
+      "description": "Enter username",
+      "risk": "safe",
+      "target": {
+        "description": "username",
+        "locators": [
+          { "type": "name", "value": "username" },
+          { "type": "css", "value": "input[name='username']" }
+        ]
+      },
+      "value": "${username}"
+    },
+    {
+      "id": "s3",
+      "type": "type",
+      "description": "Enter password",
+      "risk": "safe",
+      "target": {
+        "description": "password",
+        "locators": [
+          { "type": "name", "value": "password" },
+          { "type": "css", "value": "input[name='password']" }
+        ]
+      },
+      "value": "${password}"
+    },
+    {
+      "id": "s4",
+      "type": "click",
+      "description": "Submit login",
+      "risk": "safe",
+      "target": {
+        "description": "Log In",
+        "locators": [
+          { "type": "role", "role": "button", "value": "Log In" },
+          { "type": "css", "value": "input[type='submit'][value='Log In']" }
+        ]
+      }
+    },
+    {
+      "id": "s5",
+      "type": "click",
+      "description": "Open Find Transactions",
+      "risk": "safe",
+      "target": {
+        "description": "Find Transactions nav link",
+        "locators": [
+          { "type": "role", "role": "link", "value": "Find Transactions" },
+          { "type": "css", "value": "a[href='findtrans.htm']" }
+        ]
+      }
+    },
+    {
+      "id": "s6",
+      "type": "select",
+      "description": "Choose account",
+      "risk": "safe",
+      "target": {
+        "description": "account dropdown",
+        "locators": [
+          { "type": "id", "value": "accountId" },
+          { "type": "css", "value": "select#accountId" }
+        ]
+      },
+      "value": "${account_id}"
+    },
+    {
+      "id": "s7",
+      "type": "type",
+      "description": "Enter range start date",
+      "risk": "safe",
+      "target": {
+        "description": "from date",
+        "locators": [
+          { "type": "id", "value": "fromDate" },
+          { "type": "css", "value": "#fromDate" }
+        ]
+      },
+      "value": "${from_date}"
+    },
+    {
+      "id": "s8",
+      "type": "type",
+      "description": "Enter range end date",
+      "risk": "safe",
+      "target": {
+        "description": "to date",
+        "locators": [
+          { "type": "id", "value": "toDate" },
+          { "type": "css", "value": "#toDate" }
+        ]
+      },
+      "value": "${to_date}"
+    },
+    {
+      "id": "s9",
+      "type": "click",
+      "description": "Run date range search",
+      "risk": "safe",
+      "target": {
+        "description": "findByDateRange button",
+        "locators": [
+          { "type": "id", "value": "findByDateRange" },
+          { "type": "css", "value": "#findByDateRange" }
+        ]
+      }
+    },
+    {
+      "id": "s10",
+      "type": "extract",
+      "description": "Count result rows",
+      "risk": "safe",
+      "extract": {
+        "field": "transaction_count",
+        "locators": [
+          { "type": "css", "value": "#transactionTable tbody tr" },
+          { "type": "xpath", "value": "//table[@id='transactionTable']//tbody/tr" }
+        ]
+      }
+    },
+    {
+      "id": "s11",
+      "type": "assert",
+      "description": "Results table visible",
+      "risk": "safe",
+      "assertion": { "text_contains": "Transaction Results" }
+    }
+  ],
+  "checkpoint": {
+    "url_regex": "findtrans\\.htm",
+    "text_contains": "Transaction Results",
+    "required_outputs": ["transaction_count", "account_id"]
+  },
+  "outcomes": [
+    {
+      "code": "invalid_login",
+      "kind": "business_outcome",
+      "text_contains": "Please enter a username and password."
+    },
+    {
+      "code": "invalid_login",
+      "kind": "business_outcome",
+      "text_contains": "could not be verified"
+    },
+    {
+      "code": "success",
+      "kind": "success",
+      "text_contains": "Transaction Results"
+    }
+  ]
+}

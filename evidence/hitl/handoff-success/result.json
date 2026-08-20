@@ -1,0 +1,17 @@
+{
+  "status": "recovered",
+  "outcome_code": "success_after_human",
+  "outputs": {
+    "account_id": "****2345",
+    "available_balance": "$0.00"
+  },
+  "step_id": null,
+  "expected": null,
+  "observed": null,
+  "evidence_dir": "evidence\\hitl\\handoff-success",
+  "llm_calls": 0,
+  "error": null,
+  "recovered_events": [
+    "s6: human completed step in browser"
+  ]
+}

@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 SCHEMA_VERSION = "1.0"
 
 LocatorType = Literal["role", "label", "placeholder", "name", "id", "text", "css", "xpath"]
-StepType = Literal["navigate", "click", "type", "extract", "assert"]
+StepType = Literal["navigate", "click", "type", "select", "extract", "assert"]
 RiskClass = Literal["safe", "confirm", "blocked"]
 ParamType = Literal["string", "number", "bool"]
 OutcomeKind = Literal["success", "business_outcome"]
@@ -67,10 +67,10 @@ class Step(BaseModel):
     def _shape_matches_type(self) -> Step:
         if self.type == "navigate" and not self.url:
             raise ValueError("navigate steps require url")
-        if self.type in ("click", "type") and self.target is None:
+        if self.type in ("click", "type", "select") and self.target is None:
             raise ValueError(f"{self.type} steps require target")
-        if self.type == "type" and self.value is None:
-            raise ValueError("type steps require value")
+        if self.type in ("type", "select") and self.value is None:
+            raise ValueError(f"{self.type} steps require value")
         if self.type == "extract" and self.extract is None:
             raise ValueError("extract steps require extract")
         if self.type == "assert" and self.assertion is None:

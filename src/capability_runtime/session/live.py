@@ -1,4 +1,10 @@
-"""Live session with an explicit controller: automation | human | none."""
+"""Live browser session with explicit automation vs human control.
+
+HITL contract:
+  pause()  — automation stops acting; Chromium stays open; intervention.json written
+  wait_for_resume() — blocks until resume.signal or signal_resume()
+  human_actions — DOM clicks logged while controller=human
+"""
 
 from __future__ import annotations
 

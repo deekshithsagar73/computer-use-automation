@@ -1,17 +1,26 @@
 # Evidence
 
-This folder holds run artifacts required by the assignment. Each run is a directory with `events.jsonl`, `result.json`, and a PNG of the page.
+Run artifacts for the interface.ai computer-use assignment. Each run directory contains:
 
-| Subfolder | What belongs here | Canonical run |
-|---|---|---|
-| `discovery/` | OpenAI observe/decide/act log and generated capability | `20260816T234846Z` (`llm_calls=5`) |
-| `replay-success/` | Deterministic replay, `llm_calls=0`, activity page PNG | `20260817T000321Z` (`final.png`) |
-| `replay-error/` | Empty login → `invalid_login`, not a crash | `20260817T000448Z` (`outcome.png`) |
-| `hitl/` | Locator miss, pause, `intervention.json`, resume | `locator-miss/` |
+| File | Purpose |
+|---|---|
+| `events.jsonl` | Timestamped act / decide / escalate / resume log |
+| `result.json` | Final status, `outcome_code`, outputs, `llm_calls` |
+| `final.png` / `outcome.png` | Page screenshot at success or business outcome |
+| `intervention.json` | HITL pause: step, reason, operator instructions |
+| `intervention.png` | Page at handoff |
 
-## How to read a run
+## Canonical folders (submission)
 
-- `result.json` — status, outcome_code, outputs, `llm_calls`
-- `events.jsonl` — timestamped act/decide/escalated/resumed lines
-- `final.png` / `outcome.png` / `intervention.png` — page at the end or at handoff
-- `intervention.json` — why automation stopped and how to resume (`cli.py resume --run-id …`)
+| Path | Scenario |
+|---|---|
+| `discovery/20260816T234846Z/` | OpenAI discovery, 5 LLM calls, compiled capability |
+| `replay-success/lookup-balance-demo/` | Headed replay, account activity, `llm_calls=0` |
+| `replay-success/find-transactions-demo/` | Complex date-range search, `llm_calls=0` |
+| `replay-error/invalid-login-demo/` | Empty login → `invalid_login` + `outcome.png` |
+| `hitl/handoff-success/` | Pause on overview, human completes account open, automation finishes |
+| `hitl/live-handoff/` | *(optional)* same flow with a real operator click during interview |
+
+## HITL evidence notes
+
+`handoff-success` used `CUA_SIMULATE_HUMAN=1` so the run completes in automation without an operator present. For a live demo, run the same capability **without** that variable, click the account in the headed window, then `cli.py resume --run-id <folder>`.
