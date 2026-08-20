@@ -1,0 +1,16 @@
+{"ts": "2026-08-20T06:29:43.106174+00:00", "event": "replay_start", "capability": "parabank.lookup_balance.hitl_<secret:password>", "llm_calls": 0}
+{"ts": "2026-08-20T06:29:44.331103+00:00", "event": "act", "actor": "automation", "step": "s1", "type": "navigate", "url": "https://parabank.parasoft.com/parabank/index.htm"}
+{"ts": "2026-08-20T06:29:44.373044+00:00", "event": "act", "actor": "automation", "step": "s2", "type": "type"}
+{"ts": "2026-08-20T06:29:44.389589+00:00", "event": "act", "actor": "automation", "step": "s3", "type": "type"}
+{"ts": "2026-08-20T06:29:45.919647+00:00", "event": "act", "actor": "automation", "step": "s4", "type": "click"}
+{"ts": "2026-08-20T06:29:45.956972+00:00", "event": "act", "actor": "automation", "step": "s5", "type": "extract", "field": "account_id"}
+{"ts": "2026-08-20T06:29:50.967886+00:00", "event": "locator_miss", "step": "s6", "error": "locator ladder exhausted: css='#cua-stale-account-link' timeout"}
+{"ts": "2026-08-20T06:29:51.062770+00:00", "event": "screenshot", "path": "s6-miss.png"}
+{"ts": "2026-08-20T06:29:51.117190+00:00", "event": "escalated", "step": "s6", "why": "locator_miss", "controller": "human"}
+{"ts": "2026-08-20T06:31:04.227414+00:00", "event": "resumed", "actor": "human", "human_actions": [{"kind": "dom", "payload": {"type": "click", "tag": "A", "name": "****2345"}, "actor": "human"}]}
+{"ts": "2026-08-20T06:31:04.261492+00:00", "event": "human_completed_step", "step": "s6", "url": "https://parabank.parasoft.com/parabank/activity.htm?id=****2345"}
+{"ts": "2026-08-20T06:31:04.367269+00:00", "event": "screenshot", "path": "after-human.png"}
+{"ts": "2026-08-20T06:31:04.388834+00:00", "event": "act", "actor": "automation", "step": "s7", "type": "extract", "field": "available_balance"}
+{"ts": "2026-08-20T06:31:04.416727+00:00", "event": "act", "actor": "automation", "step": "s8", "type": "assert"}
+{"ts": "2026-08-20T06:31:04.531532+00:00", "event": "screenshot", "path": "final.png"}
+{"ts": "2026-08-20T06:31:04.534726+00:00", "event": "replay_end", "status": "recovered", "llm_calls": 0}

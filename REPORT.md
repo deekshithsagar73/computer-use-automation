@@ -73,7 +73,7 @@ On HITL pause:
 
 Outcome after a successful handoff: `success_after_human` with a `recovered_events` entry.
 
-Evidence: `evidence/hitl/handoff-success/` (simulated operator for automation); live interview demo uses the same flow without `CUA_SIMULATE_HUMAN`.
+Evidence: `evidence/hitl/live-handoff/` (real operator); `evidence/hitl/handoff-simulated/` (automated stand-in using `CUA_SIMULATE_HUMAN=1`).
 
 ## 6. Safety
 

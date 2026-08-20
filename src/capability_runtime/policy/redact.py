@@ -25,8 +25,11 @@ def redact_text(text: str, params: dict[str, Any], secret_names: set[str]) -> st
     redacted = text
     for name in secret_names:
         value = params.get(name)
-        if value:
-            redacted = redacted.replace(str(value), SECRET_PLACEHOLDER.format(name=name))
+        if not value:
+            continue
+        # Whole-token replacement so "demo" does not corrupt ids like hitl_demo.
+        pattern = re.compile(r"(?<!\w)" + re.escape(str(value)) + r"(?!\w)")
+        redacted = pattern.sub(SECRET_PLACEHOLDER.format(name=name), redacted)
     return redact_account_numbers(redacted)
 
 

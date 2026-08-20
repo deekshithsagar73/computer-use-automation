@@ -1,61 +1,99 @@
 # Computer-use capability runtime
 
-Integration layer for legacy web UIs that have no API. A model discovers a flow once; the run compiles into a typed **capability** JSON file. Production **replay** executes that file with Playwright and **never calls an LLM**.
+Record-once / replay-many layer for legacy web UIs without an API. OpenAI discovers a flow once and compiles a typed **capability** JSON file. **Replay** runs that file in Playwright with **`llm_calls=0`**.
 
-Target application: [ParaBank](https://parabank.parasoft.com/parabank/index.htm) (Parasoft demo bank). All interaction is through the UI; ParaBank REST endpoints are not used.
+Target: [ParaBank](https://parabank.parasoft.com/parabank/index.htm) (demo credentials `john` / `demo` in `.env.example`).
 
-## Architecture (short)
+---
 
-| Runtime | Role |
+## Reviewer quickstart (no API key needed)
+
+```bash
+git clone https://github.com/deekshithsagar73/computer-use-automation.git
+cd computer-use-automation
+python -m venv .venv && .venv\Scripts\activate    # Windows
+pip install -e ".[dev]"
+playwright install chromium
+
+# 1) Deterministic replay — balance lookup
+python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.success.json --evidence evidence/replay-success/reviewer-run
+
+# 2) Business error — invalid login (not a crash)
+python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.invalid_login.json --evidence evidence/replay-error/reviewer-run
+
+# 3) Complex flow — find transactions by date range
+python cli.py replay --capability capabilities/find_transactions.v1.json --params capabilities/params.find_transactions.json --evidence evidence/replay-success/reviewer-find-tx
+```
+
+Confirm `llm_calls: 0` in the printed JSON. Pre-recorded evidence (logs + screenshots) is under **`evidence/`** — index in [`evidence/README.md`](evidence/README.md).
+
+Design write-up: [`REPORT.md`](REPORT.md).
+
+---
+
+## What is in the submission
+
+| Deliverable | Location |
 |---|---|
-| `DiscoveryRun` | LLM + accessibility snapshot → action loop → compiler emits `capability.v1` |
-| `ReplayEngine` | Walks capability steps, policy checks, locator ladder, `llm_calls=0` |
-| `LiveSession` | Single Chromium context; `automation` ↔ `human` controller for HITL |
-| `Policy` | Host allowlist, action allowlist, irreversible click blocks, secret redaction |
-| `Surface` | Playwright observe/act (extensible to other drivers via the same interface) |
+| Capability schema + runtime | `src/capability_runtime/` |
+| Hand-written capabilities | `capabilities/*.v1.json` |
+| OpenAI discovery artifact | `capabilities/lookup_balance.generated.json` |
+| Discovery evidence | `evidence/discovery/20260816T234846Z/` |
+| Replay success + PNG | `evidence/replay-success/lookup-balance-demo/` |
+| Complex workflow | `evidence/replay-success/find-transactions-demo/` |
+| Invalid login + PNG | `evidence/replay-error/invalid-login-demo/` |
+| **Live human handoff** | `evidence/hitl/live-handoff/` |
+| Unit tests | `tests/` (`pytest -q`) |
 
-Design detail: `REPORT.md`.
+---
 
-## Setup
+## Architecture
+
+| Component | Role |
+|---|---|
+| `DiscoveryRun` | LLM + accessibility snapshot → compiler → `capability.v1` |
+| `ReplayEngine` | Policy + locator ladder + outcomes; never calls an LLM |
+| `LiveSession` | `automation` ↔ `human` control for HITL |
+| `Policy` | Host/action allowlist, irreversible click blocks, redaction |
+| `Surface` | Playwright observe/act (seam for other drivers) |
+
+Locators are DOM-based (`name`, `id`, `role`, CSS, XPath ladder) — not screenshots or pixel coordinates.
+
+---
+
+## Setup (full)
 
 Python 3.11+.
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate          # Windows
+.venv\Scripts\activate
 pip install -e ".[dev]"
 playwright install chromium
 copy .env.example .env
 ```
 
-`.env` holds `OPENAI_API_KEY` for **discovery only**. Replay does not need a model key.
+`OPENAI_API_KEY` in `.env` is required **only** for `discover`. Replay does not need a model key.
 
-## Capabilities shipped in this repo
+---
 
-| File | Flow |
-|---|---|
-| `lookup_balance.v1.json` | Login → first account → available balance |
-| `find_transactions.v1.json` | Login → Find Transactions → date-range search → row count |
-| `lookup_balance.hitl-demo.json` | Same as lookup balance; stale locator on account click to demo HITL |
-| `lookup_balance.generated.json` | Produced by the last successful OpenAI discovery run |
+## Run commands
 
-## Demo commands (headed browser by default)
+Chromium opens **headed** (visible) unless `--headless` is passed.
 
-Chromium opens visibly unless `--headless` is passed.
-
-### Simple replay (no model)
+### Replay — lookup balance
 
 ```bash
 python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.success.json --evidence evidence/replay-success/lookup-balance-demo
 ```
 
-Business outcome (empty login → `invalid_login`, not a crash):
+### Replay — invalid login
 
 ```bash
 python cli.py replay --capability capabilities/lookup_balance.v1.json --params capabilities/params.invalid_login.json --evidence evidence/replay-error/invalid-login-demo
 ```
 
-### Complex replay (multi-step form, `select` step)
+### Replay — find transactions (complex)
 
 ```bash
 python cli.py replay --capability capabilities/find_transactions.v1.json --params capabilities/params.find_transactions.json --evidence evidence/replay-success/find-transactions-demo
@@ -65,26 +103,30 @@ python cli.py replay --capability capabilities/find_transactions.v1.json --param
 
 ```bash
 python cli.py discover --goal "Log in as john, open the first account, read the available balance, stop on the account activity page."
-python cli.py replay --capability capabilities/lookup_balance.generated.json --params capabilities/params.success.json --evidence evidence/replay-success/generated-replay
+python cli.py replay --capability capabilities/lookup_balance.generated.json --params capabilities/params.success.json
 ```
 
-### Human-in-the-loop (live interview demo)
+### Human-in-the-loop (operator clicks in Chromium)
 
-Terminal A — replay pauses on Accounts Overview; **click the account link in the Chromium window**:
+**Terminal A** — automation pauses on Accounts Overview:
 
 ```bash
 python cli.py replay --capability capabilities/lookup_balance.hitl-demo.json --params capabilities/params.success.json --hitl --evidence evidence/hitl/live-handoff
 ```
 
-Terminal B — after clicking the account and reaching the activity page:
+Click the **account number link** in the browser window.
+
+**Terminal B** — hand control back:
 
 ```bash
 python cli.py resume --run-id live-handoff
 ```
 
-Automation resumes, extracts balance, finishes with `success_after_human` and `llm_calls=0`.
+Recorded proof with a real operator click: **`evidence/hitl/live-handoff/`** (`human_actions` in `events.jsonl`, no `simulated_human` event).
 
-Evidence under `evidence/hitl/handoff-success/` was captured with `CUA_SIMULATE_HUMAN=1` for CI; live demos should omit that variable.
+The folder **`evidence/hitl/handoff-simulated/`** (if present) is the same flow completed by a dev-only env flag for automated runs — not a substitute for live handoff.
+
+---
 
 ## Tests
 
@@ -92,24 +134,19 @@ Evidence under `evidence/hitl/handoff-success/` was captured with `CUA_SIMULATE_
 pytest -q
 ```
 
-## Repository layout
+---
 
-```
-src/capability_runtime/
-  schema/       capability.v1 + result taxonomy
-  policy/       allowlist, redaction
-  surface/      Playwright adapter
-  replay/       deterministic interpreter
-  discovery/    LLM loop + compiler
-  session/      HITL control transfer
-  llm/          OpenAI / Gemini clients
-capabilities/   versioned workflow artifacts
-evidence/       run logs, PNGs, intervention.json
-REPORT.md       design write-up (assignment headings)
-```
+## UI drift and errors
 
-## Safety defaults
+- Each step stores an ordered **locator ladder**; replay tries `name` → `id` → `role` → CSS → XPath.
+- Expected domain failures map to **`business_outcome`** (e.g. `invalid_login`), not a stack trace.
+- Locator exhaustion → **`failed`** + screenshot, or **HITL pause** with `--hitl`.
+- Replay does **not** call an LLM to heal missed locators; update the capability or re-run discovery.
 
-- Host allowlist: `parabank.parasoft.com`
-- Blocked clicks: Transfer Funds, Bill Pay, Open New Account
-- Passwords stored as `${password}` in artifacts; values redacted in JSONL
+---
+
+## Safety
+
+- Allowlist: `parabank.parasoft.com`
+- Blocked: Transfer Funds, Bill Pay, Open New Account
+- Secrets: `${password}` in artifacts; redacted in logs

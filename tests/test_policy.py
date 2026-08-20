@@ -50,3 +50,9 @@ def test_account_numbers_redacted():
     text = redact_text("account 12345678 posted", {}, set())
     assert "12345678" not in text
     assert text.endswith("5678 posted") or "****5678" in text
+
+
+def test_redact_does_not_corrupt_capability_ids():
+    params = {"password": "demo"}
+    out = redact_text("parabank.lookup_balance.hitl_demo", params, {"password"})
+    assert out == "parabank.lookup_balance.hitl_demo"
